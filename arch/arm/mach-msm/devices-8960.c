@@ -578,7 +578,7 @@ static struct resource resources_uart_gsbi8[] = {
 
 struct platform_device msm8960_device_uart_gsbi8 = {
 	.name	= "msm_serial_hsl",
-#ifdef CONFIG_MACH_M4_UL
+#ifdef CONFIG_ARCH_MSM8930
 	.id	= 0,
 #else
 	.id	= 1,
