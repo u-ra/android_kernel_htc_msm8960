@@ -18,4 +18,4 @@ obj-$(CONFIG_MACH_VILLE) += ville/
 obj-$(CONFIG_MACH_M4_UL) += m4/
 
 # TC2
-obj-$(CONFIG_MACH_TC2) += totemc2/
+obj-$(CONFIG_MACH_TC2) += tc2/

@@ -18,7 +18,7 @@ source "arch/arm/mach-msm/htc/ville/Kconfig"
 source "arch/arm/mach-msm/htc/m4/Kconfig"
 
 # TC2
-source "arch/arm/mach-msm/htc/totemc2/Kconfig"
+source "arch/arm/mach-msm/htc/tc2/Kconfig"
 
 config MACH_HTC_DUMMY
 	bool "NONE (No device)"
