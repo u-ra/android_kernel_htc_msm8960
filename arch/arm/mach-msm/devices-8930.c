@@ -26,6 +26,11 @@
 #include <mach/msm_rtb.h>
 #include <mach/msm_cache_dump.h>
 
+#ifdef CONFIG_MACH_M4_UL
+#include <sound/msm-dai-q6.h>
+#include <sound/apr_audio.h>
+#endif
+
 #include "devices.h"
 #include "rpm_log.h"
 #include "rpm_stats.h"
@@ -806,6 +811,18 @@ struct platform_device *msm8930_footswitch[] __initdata = {
 	FS_8X60(FS_VED,    "vdd",	"msm_vidc.0",	&ved_fs_data),
 };
 unsigned msm8930_num_footswitch __initdata = ARRAY_SIZE(msm8930_footswitch);
+
+#ifdef CONFIG_MACH_M4_UL
+struct platform_device apq_cpudai_pri_i2s_rx = {
+        .name = "msm-dai-q6",
+        .id = 0,
+};
+
+struct platform_device apq_cpudai_pri_i2s_tx = {
+        .name = "msm-dai-q6",
+        .id = 1,
+};
+#endif
 
 struct platform_device *msm8930_pm8917_footswitch[] __initdata = {
 	FS_8X60(FS_MDP,    "vdd",	"mdp.0",      &mdp_fs_data_8930_pm8917),

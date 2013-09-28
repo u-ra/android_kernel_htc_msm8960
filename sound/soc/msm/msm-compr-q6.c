@@ -105,6 +105,16 @@ static struct snd_pcm_hw_constraint_list constraints_sample_rates = {
 	.mask = 0,
 };
 
+#ifdef CONFIG_MACH_M4_UL
+static struct msm_compr_q6_ops default_cops;
+static struct msm_compr_q6_ops *cops = &default_cops;
+
+void htc_register_compr_q6_ops(struct msm_compr_q6_ops *ops)
+{
+        cops = ops;
+}
+#endif
+
 static void compr_event_handler(uint32_t opcode,
 		uint32_t token, uint32_t *payload, void *priv)
 {
@@ -904,6 +914,9 @@ static int msm_compr_hw_params(struct snd_pcm_substream *substream,
 	struct snd_dma_buffer *dma_buf = &substream->dma_buffer;
 	struct audio_buffer *buf;
 	int dir, ret;
+#ifdef CONFIG_MACH_M4_UL
+        short bit_width = 16;
+#endif
 	struct asm_softpause_params softpause = {
 		.enable = SOFT_PAUSE_ENABLE,
 		.period = SOFT_PAUSE_PERIOD,
@@ -922,6 +935,18 @@ static int msm_compr_hw_params(struct snd_pcm_substream *substream,
 	else
 		dir = OUT;
 
+#ifdef CONFIG_MACH_M4_UL
+        if (runtime->format == SNDRV_PCM_FORMAT_S24_LE)
+                bit_width = 24;
+
+        if (cops->get_24b_audio) {
+                if (cops->get_24b_audio() == 1) {
+                        pr_info("%s: enable 24 bit Audio in POPP\n",
+                                    __func__);
+                        bit_width = 24;
+                }
+        }
+#endif
 
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
 		switch (compr->info.codec_param.codec.id) {

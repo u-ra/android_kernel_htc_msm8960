@@ -264,19 +264,21 @@ static struct platform_device msm8930_android_pmem_adsp_device = {
 	.dev = { .platform_data = &android_pmem_adsp_pdata },
 };
 
+#endif /* CONFIG_MSM_MULTIMEDIA_USE_ION */
+
 static struct android_pmem_platform_data android_pmem_audio_pdata = {
-	.name = "pmem_audio",
-	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
-	.cached = 0,
-	.memory_type = MEMTYPE_EBI1,
+        .name = "pmem_audio",
+        .allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
+        .cached = 0,
+        .memory_type = MEMTYPE_EBI1,
 };
 
 static struct platform_device msm8930_android_pmem_audio_device = {
-	.name = "android_pmem",
-	.id = 4,
-	.dev = { .platform_data = &android_pmem_audio_pdata },
+        .name = "android_pmem",
+        .id = 4,
+        .dev = { .platform_data = &android_pmem_audio_pdata },
 };
-#endif /* CONFIG_MSM_MULTIMEDIA_USE_ION */
+
 #endif /* CONFIG_ANDROID_PMEM */
 
 struct fmem_platform_data msm8930_fmem_pdata = {
@@ -3156,8 +3158,8 @@ static struct platform_device *common_devices[] __initdata = {
 #ifndef CONFIG_MSM_MULTIMEDIA_USE_ION
 	&msm8930_android_pmem_device,
 	&msm8930_android_pmem_adsp_device,
-	&msm8930_android_pmem_audio_device,
 #endif /*CONFIG_MSM_MULTIMEDIA_USE_ION*/
+	&msm8930_android_pmem_audio_device,
 #endif /*CONFIG_ANDROID_PMEM*/
 	&msm8930_fmem_device,
 	&msm_device_bam_dmux,

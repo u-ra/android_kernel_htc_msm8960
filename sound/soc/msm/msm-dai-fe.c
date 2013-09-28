@@ -364,6 +364,46 @@ static struct snd_soc_dai_driver msm_fe_dais[] = {
 		.ops = &msm_fe_dai_ops,
 		.name = "HDMI_HOSTLESS"
 	},
+#ifdef CONFIG_MACH_M4_UL
+	{
+		.playback = {
+			.stream_name = "PRI_I2S_HOSTLESS Playback",
+			.aif_name = "PRI_I2S_DL_HL",
+			.rates = SNDRV_PCM_RATE_8000_48000,
+			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+			.channels_min = 1,
+			.channels_max = 4,
+			.rate_min =	8000,
+			.rate_max =	48000,
+		},
+		.capture = {
+			.stream_name = "PRI_I2S_HOSTLESS Capture",
+			.aif_name = "PRI_I2S_UL_HL",
+			.rates = SNDRV_PCM_RATE_8000_48000,
+			.formats = SNDRV_PCM_FMTBIT_S16_LE,
+			.channels_min = 1,
+			.channels_max = 2,
+			.rate_min =	8000,
+			.rate_max =	48000,
+		},
+		.ops = &msm_fe_dai_ops,
+		.name = "PRI_I2S_HOSTLESS",
+	},
+        {
+                .playback = {
+                        .stream_name = "MM_STUB Playback",
+                        .aif_name = "MM_STUB_DL",
+                        .rates = SNDRV_PCM_RATE_8000_48000,
+                        .formats = SNDRV_PCM_FMTBIT_S16_LE,
+                        .channels_min = 1,
+                        .channels_max = 2,
+                        .rate_min = 8000,
+                        .rate_max = 48000,
+                },
+                .ops = &msm_fe_dai_ops,
+                .name = "MM_STUB",
+        },
+#endif /* CONFIG_MACH_M4_UL */
 	{
 		.playback = {
 			.stream_name = "AUXPCM Hostless Playback",
@@ -412,6 +452,37 @@ static struct snd_soc_dai_driver msm_fe_dais[] = {
 		.ops = &msm_fe_dai_ops,
 		.name = "VOICE_STUB",
 	},
+#ifdef CONFIG_MACH_M4_UL
+        {
+                .playback = {
+                        .stream_name = "MI2S Hostless Playback",
+                        .aif_name = "MI2S_DL_HL",
+                        .rates = (SNDRV_PCM_RATE_8000 |
+                                SNDRV_PCM_RATE_16000 |
+                                SNDRV_PCM_RATE_48000),
+                        .formats = (SNDRV_PCM_FMTBIT_S16_LE |
+                                        SNDRV_PCM_FMTBIT_S24_LE),
+                        .channels_min = 1,
+                        .channels_max = 2,
+                        .rate_min =     48000,
+                        .rate_max =     8000,
+                },
+                .capture = {
+                        .stream_name = "MI2S Hostless Capture",
+                        .aif_name = "MI2S_UL_HL",
+                        .rates = (SNDRV_PCM_RATE_8000 |
+                                SNDRV_PCM_RATE_16000 |
+                                SNDRV_PCM_RATE_48000),
+                        .formats = SNDRV_PCM_FMTBIT_S16_LE,
+                        .channels_min = 1,
+                        .channels_max = 2,
+                        .rate_min =     8000,
+                        .rate_max =    48000,
+                },
+                .ops = &msm_fe_dai_ops,
+                .name = "MI2S_HOSTLESS",
+        },
+#endif /* CONFIG_MACH_M4_UL */
 	{
 		.playback = {
 			.stream_name = "VoLTE Playback",

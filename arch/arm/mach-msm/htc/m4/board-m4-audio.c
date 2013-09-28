@@ -20,8 +20,8 @@
 #include <linux/tfa9887.h>
 #include <linux/rt5501.h>
 #include "board-m4.h"
-#include "../../../sound/soc/msm/msm-pcm-routing.h"
-#include "../../../sound/soc/msm/msm-compr-q6.h"
+#include "../../../../../sound/soc/msm/msm-pcm-routing.h"
+#include "../../../../../sound/soc/msm/msm-compr-q6.h"
 
 static atomic_t q6_effect_mode = ATOMIC_INIT(-1);
 extern unsigned int system_rev;
@@ -162,7 +162,7 @@ static int m4_get_q6_effect_mode(void)
 
 static int m4_get_24b_audio(void)
 {
-	return 1;
+        return 1;
 }
 
 static struct acoustic_ops acoustic = {
@@ -182,7 +182,7 @@ static struct msm_pcm_routing_ops rops = {
 };
 
 static struct msm_compr_q6_ops cops = {
-	.get_24b_audio = m4_get_24b_audio,
+        .get_24b_audio = m4_get_24b_audio,
 };
 
 static int __init m4_audio_init(void)

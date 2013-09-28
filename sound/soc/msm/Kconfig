@@ -209,4 +209,15 @@ config SND_SOC_DUAL_AMIC
 	help
 	 To add support for dual analog mic.
 
+config SND_SOC_MSM8930
+    depends on ARCH_MSM8930
+    bool "MSM8930"
+    help
+      Support for msm8930 audio
+
+config SND_SOC_MSM8930_FM_MI2S
+    depends on ARCH_MSM8930
+    bool "MSM8930_FM_MI2S"
+    help
+      Define msm8930 using MI2S for FM. Or using I2S for FM.
 endmenu

@@ -66,6 +66,19 @@ snd-soc-msm8960-objs := msm8960.o apq8064.o msm8930.o mpq8064.o apq8064-i2s.o
 obj-$(CONFIG_SND_SOC_MSM8960) += snd-soc-msm8960.o
 endif
 
+# MSM 8930 sound card driver
+#ifdef CONFIG_ARCH_MSM8930
+#snd-soc-msm8960-objs := msm8930.o
+#obj-$(CONFIG_SND_SOC_MSM8960) += snd-soc-msm8960.o
+#endif
+#
+# Use HTC's sound card driver for the moment
+ifdef CONFIG_SND_SOC_MSM8930
+snd-soc-msm8960-objs := msm8930_htc.o
+obj-$(CONFIG_SND_SOC_MSM8960) += snd-soc-msm8960.o
+endif
+
+
 # Generic MSM drivers
 snd-soc-hostless-pcm-objs := msm-pcm-hostless.o
 obj-$(CONFIG_SND_SOC_MSM_HOSTLESS_PCM) += snd-soc-hostless-pcm.o
