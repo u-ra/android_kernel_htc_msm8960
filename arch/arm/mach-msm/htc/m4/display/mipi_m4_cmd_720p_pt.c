@@ -48,6 +48,9 @@ static int __init mipi_cmd_m4_720p_pt_init(void)
 	pinfo.wait_cycle = 0;
 	pinfo.bpp = 24;
 
+	pinfo.width = 53;
+	pinfo.height = 94;
+
 	if (panel_type == PANEL_ID_KIWI_SHARP_HX) {
 		pinfo.lcdc.h_back_porch = 29;
 		pinfo.lcdc.h_front_porch = 55;
