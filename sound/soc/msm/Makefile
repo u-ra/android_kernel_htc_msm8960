@@ -71,13 +71,6 @@ endif
 #snd-soc-msm8960-objs := msm8930.o
 #obj-$(CONFIG_SND_SOC_MSM8960) += snd-soc-msm8960.o
 #endif
-#
-# Use HTC's sound card driver for the moment
-ifdef CONFIG_SND_SOC_MSM8930
-snd-soc-msm8960-objs := msm8930_htc.o
-obj-$(CONFIG_SND_SOC_MSM8960) += snd-soc-msm8960.o
-endif
-
 
 # Generic MSM drivers
 snd-soc-hostless-pcm-objs := msm-pcm-hostless.o
