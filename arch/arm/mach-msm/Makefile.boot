@@ -46,12 +46,12 @@ endif
 # MSM8930
 ifeq ($(CONFIG_MACH_M4_UL),y)
    zreladdr-$(CONFIG_ARCH_MSM8930)	:= 0x80608000
-endif
-
-ifeq (($(CONFIG_MACH_TC2),y)
-   zreladdr-$(CONFIG_ARCH_MSM8930)	:= 0x80408000
 else
-   zreladdr-$(CONFIG_ARCH_MSM8930)	:= 0x80208000
+   ifeq (($(CONFIG_MACH_TC2),y)
+      zreladdr-$(CONFIG_ARCH_MSM8930)	:= 0x80408000
+   else
+      zreladdr-$(CONFIG_ARCH_MSM8930)	:= 0x80208000
+   endif
 endif
 
 # APQ8064
