@@ -721,7 +721,7 @@ static void __init reserve_ion_memory(void)
 				heap->base = fixed_middle_start;
 				if (middle_use_cma)
 					dma_declare_contiguous(
-						&ion_mm_heap_device.dev,
+						heap->priv,
 						heap->size,
 						fixed_middle_start,
 						0xa0000000);
