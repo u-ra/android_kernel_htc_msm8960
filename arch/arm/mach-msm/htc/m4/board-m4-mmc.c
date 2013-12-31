@@ -131,7 +131,7 @@ static struct mmc_platform_data m4_wifi_data = {
 	.uhs_caps	= (MMC_CAP_UHS_SDR12 | MMC_CAP_UHS_SDR25 |
 			MMC_CAP_UHS_SDR50),
 	.msm_bus_voting_data = &sps_to_ddr_bus_voting_data,
-	.nonremovable   = 0,
+	.nonremovable   = 1,
 };
 
 
