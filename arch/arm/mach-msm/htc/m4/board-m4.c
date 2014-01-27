@@ -2038,7 +2038,6 @@ static struct platform_device android_usb_device = {
 };
 
 #define EVM_VERSION		0x99
-#define PVT_VERSION		0x80
 
 void m4_add_usb_devices(void)
 {
