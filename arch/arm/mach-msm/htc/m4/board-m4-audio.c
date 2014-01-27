@@ -1838,7 +1838,7 @@ static void m4_set_q6_effect_mode(int mode)
 	atomic_set(&q6_effect_mode, mode);
 }
 
-static int m4_get_24b_audio(void)
+int m4_get_24b_audio(void)
 {
 	return 1;
 }
