@@ -19,6 +19,7 @@
 #include <mach/gpiomux.h>
 #include <asm/setup.h>
 
+#include "board-8930.h"
 #include "devices.h"
 #include "board-m4.h"
 
@@ -2158,7 +2159,7 @@ void __init m4_init_camera(void)
 		m4_camera_board_info.num_i2c_board_info = ARRAY_SIZE(m4_camera_i2c_boardinfo_vd6869_s5k6a2ya);
 	}
 
-	if(system_rev >= PVT)
+	if(system_rev >= PVT_VERSION)
 		sensor_vd6869_board_info.ews_enable = false;
 	else
 		sensor_vd6869_board_info.ews_enable = true;

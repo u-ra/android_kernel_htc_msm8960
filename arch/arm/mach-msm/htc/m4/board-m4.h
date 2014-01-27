@@ -8,6 +8,7 @@
 #ifndef __ARCH_ARM_MACH_MSM_BOARD_M4_H__
 #define __ARCH_ARM_MACH_MSM_BOARD_M4_H__
 
+#define PVT_VERSION	0x80
 extern struct gpio_regulator_platform_data
 	m4_gpio_regulator_pdata[] __devinitdata;
 
