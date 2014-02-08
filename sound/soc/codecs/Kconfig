@@ -286,6 +286,14 @@ config SND_SOC_UDA1380
 config SND_SOC_WCD9304
 	tristate
 
+config SND_SOC_WCD9304_M4
+	tristate "Use M4's stock WCD9304.c file, named wcd9304_m4.c instead of wcd9304.c"
+	default n
+
+config SND_SOC_WCD9304_SWITCH_PORT
+        tristate "Switch SLIMbus ports of WCD9304 from TX1/TX2 into TX3/TX4."
+        default n
+
 config SND_SOC_WCD9310
 	tristate
 

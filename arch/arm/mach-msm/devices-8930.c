@@ -26,6 +26,11 @@
 #include <mach/msm_rtb.h>
 #include <mach/msm_cache_dump.h>
 
+#ifdef CONFIG_MACH_M4_UL
+#include <sound/msm-dai-q6.h>
+#include <sound/apr_audio.h>
+#endif
+
 #include "devices.h"
 #include "rpm_log.h"
 #include "rpm_stats.h"
@@ -807,6 +812,18 @@ struct platform_device *msm8930_footswitch[] __initdata = {
 };
 unsigned msm8930_num_footswitch __initdata = ARRAY_SIZE(msm8930_footswitch);
 
+#ifdef CONFIG_MACH_M4_UL
+struct platform_device apq_cpudai_pri_i2s_rx = {
+	.name = "msm-dai-q6",
+	.id = 0,
+};
+
+struct platform_device apq_cpudai_pri_i2s_tx = {
+	.name = "msm-dai-q6",
+	.id = 1,
+};
+#endif
+
 struct platform_device *msm8930_pm8917_footswitch[] __initdata = {
 	FS_8X60(FS_MDP,    "vdd",	"mdp.0",      &mdp_fs_data_8930_pm8917),
 	FS_8X60(FS_ROT,    "vdd",	"msm_rotator.0", &rot_fs_data),
@@ -1177,6 +1194,26 @@ void __init msm8930_add_vidc_device(void)
 }
 
 struct msm_iommu_domain_name msm8930_iommu_ctx_names[] = {
+	/* Camera */
+	{
+		.name = "vpe_src",
+		.domain = CAMERA_DOMAIN,
+	},
+	/* Camera */
+	{
+		.name = "vpe_dst",
+		.domain = CAMERA_DOMAIN,
+	},
+	/* Camera */
+	{
+		.name = "vfe_imgwr",
+		.domain = CAMERA_DOMAIN,
+	},
+	/* Camera */
+	{
+		.name = "vfe_misc",
+		.domain = CAMERA_DOMAIN,
+	},
 	/* Camera */
 	{
 		.name = "ijpeg_src",
