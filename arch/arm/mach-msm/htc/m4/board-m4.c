@@ -3246,6 +3246,7 @@ static struct platform_device *cdp_devices[] __initdata = {
 	&msm_cpudai_incall_record_rx,
 	&msm_cpudai_incall_record_tx,
 	&msm_pcm_hostless,
+	&msm_lowlatency_pcm,
 };
 
 static uint32_t msm_uart_gpio[] = {
