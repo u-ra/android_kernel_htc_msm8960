@@ -328,6 +328,13 @@ config LEDS_QPNP
 	  To compile this driver as a module, choose M here: the module will
 	  be called leds-qpnp.
 
+config BACKLIGHT_WLED_CABC
+	bool "Select WLED CABC for PMIC backlight control"
+	depends on LEDS_PM8038
+	default n
+	help
+	  This option selects the WLED CABC path for PMIC backlight control.
+
 config LEDS_WM831X_STATUS
 	tristate "LED support for status LEDs on WM831x PMICs"
 	depends on LEDS_CLASS
