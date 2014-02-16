@@ -1,6 +1,8 @@
 #include <mach/panel_id.h>
 #include "../../../drivers/video/msm/msm_fb.h"
 #include "../../../drivers/video/msm/mipi_dsi.h"
+#include <linux/leds.h>
+#include <mach/board.h>
 #include "mipi_m4.h"
 
 struct dcs_cmd_req cmdreq;
@@ -1248,6 +1250,8 @@ static int mipi_m4_display_on(struct platform_device *pdev)
 	return 0;
 }
 
+DEFINE_LED_TRIGGER(bkl_led_trigger);
+
 static int mipi_m4_display_off(struct platform_device *pdev)
 {
 	struct msm_fb_data_type *mfd;
@@ -1261,7 +1265,14 @@ static int mipi_m4_display_off(struct platform_device *pdev)
 
 	m4_send_display_cmds(display_off_cmds, display_off_cmds_count);
 
+	if (wled_trigger_initialized)
+		led_trigger_event(bkl_led_trigger, 0);
+	else
+		pr_err("%s: wled trigger is not initialized!\n", __func__);
+
 	atomic_set(&lcd_power_state, 0);
+
+	pr_err("%s\n", __func__);
 
 	return 0;
 }
@@ -1317,8 +1328,10 @@ static void m4_set_backlight(struct msm_fb_data_type *mfd)
 
 	if (mipi_m4_pdata && (mipi_m4_pdata->enable_wled_bl_ctrl)
 	    && (wled_trigger_initialized)) {
+		led_trigger_event(bkl_led_trigger, led_pwm1[1]);
 		return;
 	}
+
 	mipi  = &mfd->panel_info.mipi;
 	pr_debug("%s+:bl=%d \n", __func__, mfd->bl_level);
 
@@ -1326,7 +1339,7 @@ static void m4_set_backlight(struct msm_fb_data_type *mfd)
 		pr_debug("%s: LCD is off. Skip backlight setting\n", __func__);
 		return;
 	}
-
+	
 	if (mipi->mode == DSI_VIDEO_MODE) {
 		return;
 	}
@@ -1336,6 +1349,13 @@ static void m4_set_backlight(struct msm_fb_data_type *mfd)
 	}
 
 	m4_send_display_cmds(backlight_cmds, backlight_cmds_count);
+
+#ifdef CONFIG_BACKLIGHT_WLED_CABC
+	if (wled_trigger_initialized) {
+		led_trigger_event(bkl_led_trigger, mfd->bl_level);
+	}
+#endif
+	return;
 }
 
 static int __devinit mipi_m4_lcd_probe(struct platform_device *pdev)
@@ -1359,8 +1379,26 @@ static int __devinit mipi_m4_lcd_probe(struct platform_device *pdev)
 		mipi_m4_pdata = pdev->dev.platform_data;
 	}
 	msm_fb_add_device(pdev);
+
 	return 0;
 }
+
+static struct mipi_dsi_panel_platform_data m4_pdata = {
+	.dlane_swap		=	0,
+#ifdef CONFIG_BACKLIGHT_WLED_CABC
+	.enable_wled_bl_ctrl 	= 	0x0,
+#else
+	.enable_wled_bl_ctrl 	= 	0x1,
+#endif
+};
+
+static struct platform_device mipi_dsi_m4_panel_device = {
+	.name = "mipi_m4",
+	.id = 0,
+	.dev = {
+		.platform_data = &m4_pdata,
+	}
+};
 
 static struct platform_driver this_driver = {
 	.probe  = mipi_m4_lcd_probe,
@@ -1393,8 +1431,12 @@ int mipi_m4_device_register(struct msm_panel_info *pinfo,
 
 	ch_used[channel] = TRUE;
 
+	led_trigger_register_simple("bkl_trigger", &bkl_led_trigger);
+	pr_info("%s: SUCCESS (WLED TRIGGER)\n", __func__);
 	wled_trigger_initialized = 1;
 	atomic_set(&lcd_power_state, 1);
+
+	platform_device_register(&mipi_dsi_m4_panel_device);
 
 	ret = platform_driver_register(&this_driver);
 	if (ret) {
