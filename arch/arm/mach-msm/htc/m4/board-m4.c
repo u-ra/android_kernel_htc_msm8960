@@ -3107,11 +3107,16 @@ struct platform_device device_htc_ramdump = {
 static struct platform_device *common_devices[] __initdata = {
 	&msm8930_device_acpuclk,
 	&msm8960_device_dmov,
+	&msm8930_device_qup_spi_gsbi10,
+	&msm8960_device_qup_i2c_gsbi3,
+	&msm8960_device_qup_i2c_gsbi4,
+	&msm8960_device_qup_i2c_gsbi5,
+	&msm8960_device_qup_i2c_gsbi12,
+#ifdef CONFIG_BT
+	&msm_device_uart_dm6,
+	&m4_rfkill,
+#endif
 	&msm_device_smd,
-	&msm8960_device_uart_gsbi3,
-	// &msm8960_device_uart_gsbi8,
-	&msm_device_saw_core0,
-	&msm_device_saw_core1,
 #ifndef MSM8930_PHASE_2
 	&msm8930_device_ext_l2_vreg,
 #endif
@@ -3119,26 +3124,19 @@ static struct platform_device *common_devices[] __initdata = {
 #ifdef MSM8930_PHASE_2
 	&msm8930_device_ext_otg_sw_vreg,
 #endif
-#if defined(CONFIG_MSM_CAMERA) && defined(CONFIG_RAWCHIP)
-	&m4_msm_rawchip_device,
-#endif
-#if defined(CONFIG_MSM_CAMERA) && defined(CONFIG_RAWCHIPII)
-	&msm8930_msm_rawchip_device,
-#endif
+	&msm8960_device_otg,
+	&msm8960_device_gadget_peripheral,
+	&msm_device_hsusb_host,
+	&android_usb_device,
 	&msm_8960_q6_lpass,
 	&msm_8960_q6_mss_fw,
 	&msm_8960_q6_mss_sw,
 	&msm_pil_tzapps,
 	&msm_pil_vidc,
-	&msm8930_device_qup_spi_gsbi10,
-	&msm8960_device_qup_i2c_gsbi3,
-	&msm8960_device_qup_i2c_gsbi4,
-	&msm8960_device_qup_i2c_gsbi5,
-	&msm8960_device_qup_i2c_gsbi12,
 	&msm_slim_ctrl,
 	&msm_device_wcnss_wlan,
 #if defined(CONFIG_QSEECOM)
-		&qseecom_device,
+	&qseecom_device,
 #endif
 
 #if defined(CONFIG_CRYPTO_DEV_QCRYPTO) || \
@@ -3150,10 +3148,6 @@ static struct platform_device *common_devices[] __initdata = {
 		defined(CONFIG_CRYPTO_DEV_QCEDEV_MODULE)
 	&qcedev_device,
 #endif
-#ifdef CONFIG_MSM_ROTATOR
-	&msm_rotator_device,
-#endif
-	&msm_device_sps,
 #ifdef CONFIG_MSM_FAKE_BATTERY
 	&fish_battery_device,
 #endif
@@ -3164,58 +3158,18 @@ static struct platform_device *common_devices[] __initdata = {
 	&msm8930_android_pmem_audio_device,
 #endif /*CONFIG_MSM_MULTIMEDIA_USE_ION*/
 #endif /*CONFIG_ANDROID_PMEM*/
-	&msm8930_fmem_device,
-	&msm_device_bam_dmux,
-	&msm_fm_platform_init,
-
-#ifdef CONFIG_HW_RANDOM_MSM
-	&msm_device_rng,
-#endif
-	&msm8930_rpm_device,
-	&msm8930_rpm_log_device,
-	&msm8930_rpm_rbcpr_device,
-	&msm8930_rpm_stat_device,
-	&msm8930_rpm_master_stat_device,
 #ifdef CONFIG_ION_MSM
 	&msm8930_ion_dev,
 #endif
-	&msm_device_tz_log,
-#ifdef CONFIG_MSM_QDSS
-	&msm_qdss_device,
-	&msm_etb_device,
-	&msm_tpiu_device,
-	&msm_funnel_device,
-	&msm_etm_device,
-#endif
-	&msm_device_dspcrashd_8960,
 	&msm8960_device_watchdog,
-	&msm8930_rtb_device,
-	&msm_bus_8930_apps_fabric,
-	&msm_bus_8930_sys_fabric,
-	&msm_bus_8930_mm_fabric,
-	&msm_bus_8930_sys_fpb,
-	&msm_bus_8930_cpss_fpb,
-	&msm8960_device_cache_erp,
-	&msm8930_iommu_domain_device,
-	&msm_tsens_device,
-	&msm8930_cpu_slp_status,
-#ifdef CONFIG_HTC_BATT_8960
-	&htc_battery_pdev,
+	&msm_device_saw_core0,
+	&msm_device_saw_core1,
+	&msm8930_fmem_device,
+	&msm_device_bam_dmux,
+	&msm_fm_platform_init,
+#ifdef CONFIG_HW_RANDOM_MSM
+	&msm_device_rng,
 #endif
-#ifdef CONFIG_BT
-	&msm_device_uart_dm6,
-	&m4_rfkill,
-#endif
-	&apq_cpudai_pri_i2s_rx,
-	&apq_cpudai_pri_i2s_tx,
-	&msm_cpudai_mi2s,
-};
-
-static struct platform_device *cdp_devices[] __initdata = {
-	&msm8960_device_otg,
-	&msm8960_device_gadget_peripheral,
-	&msm_device_hsusb_host,
-	&android_usb_device,
 	&msm_pcm,
 	&msm_pcm_routing,
 	&msm_cpudai0,
@@ -3229,24 +3183,68 @@ static struct platform_device *cdp_devices[] __initdata = {
 	&msm_cpudai_auxpcm_tx,
 	&msm_cpu_fe,
 	&msm_stub_codec,
-#ifdef CONFIG_MSM_GEMINI
-	&msm8960_gemini_device,
-#endif
 	&msm_voice,
 	&msm_voip,
 	&msm_lpa_pcm,
+	&msm_lowlatency_pcm,
+	&msm_pcm_hostless,
 	&msm_cpudai_afe_01_rx,
 	&msm_cpudai_afe_01_tx,
 	&msm_cpudai_afe_02_rx,
 	&msm_cpudai_afe_02_tx,
 	&msm_pcm_afe,
+	&apq_cpudai_pri_i2s_rx,
+	&apq_cpudai_pri_i2s_tx,
 	&msm_compr_dsp,
 	&msm_multi_ch_pcm,
 	&msm_cpudai_incall_music_rx,
 	&msm_cpudai_incall_record_rx,
 	&msm_cpudai_incall_record_tx,
-	&msm_pcm_hostless,
-	&msm_lowlatency_pcm,
+	&msm8930_rpm_device,
+	&msm8930_rpm_log_device,
+	&msm8930_rpm_rbcpr_device,
+	&msm8930_rpm_stat_device,
+	&msm8930_rpm_master_stat_device,
+	&msm_device_tz_log,
+#ifdef CONFIG_MSM_QDSS
+	&msm_qdss_device,
+	&msm_etb_device,
+	&msm_tpiu_device,
+	&msm_funnel_device,
+	&msm_etm_device,
+#endif
+	&msm_device_dspcrashd_8960,
+	&msm8930_rtb_device,
+	&msm_bus_8930_apps_fabric,
+	&msm_bus_8930_sys_fabric,
+	&msm_bus_8930_mm_fabric,
+	&msm_bus_8930_sys_fpb,
+	&msm_bus_8930_cpss_fpb,
+	&msm8960_device_cache_erp,
+#ifdef CONFIG_MSM_GEMINI
+	&msm8960_gemini_device,
+#endif
+	&msm8930_iommu_domain_device,
+	&msm_tsens_device,
+#ifdef CONFIG_HTC_BATT_8960
+	&htc_battery_pdev,
+#endif
+#if defined(CONFIG_MSM_CAMERA) && defined(CONFIG_RAWCHIP)
+	&m4_msm_rawchip_device,
+#endif
+#if defined(CONFIG_MSM_CAMERA) && defined(CONFIG_RAWCHIPII)
+	&msm8930_msm_rawchip_device,
+#endif
+};
+
+static struct platform_device *cdp_devices[] __initdata = {
+	&msm8960_device_uart_gsbi3,
+	&msm_cpudai_mi2s,
+	&msm_device_sps,
+#ifdef CONFIG_MSM_ROTATOR
+	&msm_rotator_device,
+#endif
+        &msm8930_cpu_slp_status,
 };
 
 static uint32_t msm_uart_gpio[] = {

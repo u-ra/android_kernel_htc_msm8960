@@ -2403,8 +2403,6 @@ static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
 		0, 0, 0, 0),
 	SND_SOC_DAPM_AIF_IN("MI2S_DL_HL", "MI2S_HOSTLESS Playback",
 		0, 0, 0, 0),
-	SND_SOC_DAPM_AIF_OUT("MI2S_UL_HL", "MI2S_HOSTLESS Capture",
-		0, 0, 0, 0),
 	SND_SOC_DAPM_SWITCH("MI2S_RX_DL_HL", SND_SOC_NOPM, 0, 0,
 				&fm_switch_mixer_controls),
 
@@ -2887,6 +2885,8 @@ static const struct snd_soc_dapm_route intercon[] = {
 	{"INTERNAL_BT_SCO_RX_Voice Mixer", "Voice Stub", "VOICE_STUB_DL"},
 	{"INTERNAL_BT_SCO_RX_Voice Mixer", "VoLTE Stub", "VOLTE_STUB_DL"},
 	{"INTERNAL_BT_SCO_RX_Voice Mixer", "Voice2 Stub", "VOICE2_STUB_DL"},
+	{"MI2S_RX_Voice Mixer", "Voip", "VOIP_DL"},
+	{"MI2S_RX_Voice Mixer", "CSVoice", "CS-VOICE_DL1"},
 	{"MI2S_RX_Voice Mixer", "Voice Stub", "VOICE_STUB_DL"},
 	{"MI2S_RX_Voice Mixer", "VoLTE Stub", "VOLTE_STUB_DL"},
 	{"MI2S_RX_Voice Mixer", "Voice2 Stub", "VOICE2_STUB_DL"},
