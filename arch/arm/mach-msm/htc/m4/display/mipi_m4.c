@@ -1393,23 +1393,6 @@ static int __devinit mipi_m4_lcd_probe(struct platform_device *pdev)
 	return 0;
 }
 
-static struct mipi_dsi_panel_platform_data m4_pdata = {
-	.dlane_swap		=	0,
-#ifdef CONFIG_BACKLIGHT_WLED_CABC
-	.enable_wled_bl_ctrl 	= 	0x0,
-#else
-	.enable_wled_bl_ctrl 	= 	0x1,
-#endif
-};
-
-static struct platform_device mipi_dsi_m4_panel_device = {
-	.name = "mipi_m4",
-	.id = 0,
-	.dev = {
-		.platform_data = &m4_pdata,
-	}
-};
-
 static struct platform_driver this_driver = {
 	.probe  = mipi_m4_lcd_probe,
 	.driver = {
@@ -1445,8 +1428,6 @@ int mipi_m4_device_register(struct msm_panel_info *pinfo,
 	pr_info("%s: SUCCESS (WLED TRIGGER)\n", __func__);
 	wled_trigger_initialized = 1;
 	atomic_set(&lcd_power_state, 1);
-
-	platform_device_register(&mipi_dsi_m4_panel_device);
 
 	ret = platform_driver_register(&this_driver);
 	if (ret) {
