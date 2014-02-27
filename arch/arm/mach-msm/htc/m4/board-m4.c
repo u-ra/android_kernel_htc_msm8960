@@ -3029,6 +3029,16 @@ static struct platform_device msm8930_device_ext_l2_vreg __devinitdata = {
 #else
 
 /* 8930 Phase 2 */
+static struct platform_device msm8930_device_ext_5v_vreg __devinitdata = {
+	.name	= GPIO_REGULATOR_DEV_NAME,
+	.id	= 63,
+	.dev	= {
+		.platform_data = &m4_gpio_regulator_pdata[
+					MSM8930_GPIO_VREG_ID_EXT_5V],
+	},
+};
+
+/* 8930 Phase 2 */
 static struct platform_device msm8930_device_ext_otg_sw_vreg __devinitdata = {
 	.name	= GPIO_REGULATOR_DEV_NAME,
 	.id	= 97,
@@ -3122,6 +3132,7 @@ static struct platform_device *common_devices[] __initdata = {
 #endif
 	&msm8960_device_ssbi_pmic,
 #ifdef MSM8930_PHASE_2
+	&msm8930_device_ext_5v_vreg,
 	&msm8930_device_ext_otg_sw_vreg,
 #endif
 	&msm8960_device_otg,
