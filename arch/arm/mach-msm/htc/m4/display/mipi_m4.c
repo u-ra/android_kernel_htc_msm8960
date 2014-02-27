@@ -1177,7 +1177,7 @@ static struct dsi_cmd_desc cabc_moving_cmds[] = {
 };
 #endif
 
-static int m4_send_display_cmds(struct dsi_cmd_desc *cmd, int cnt)
+static int m4_send_display_cmds(struct dsi_cmd_desc *cmd, int cnt, bool clk_ctrl)
 {
 	int ret = 0;
 	struct dcs_cmd_req cmdreq;
@@ -1185,6 +1185,8 @@ static int m4_send_display_cmds(struct dsi_cmd_desc *cmd, int cnt)
 	cmdreq.cmds = cmd;
 	cmdreq.cmds_cnt = cnt;
 	cmdreq.flags = CMD_REQ_COMMIT;
+	if(clk_ctrl)
+		cmdreq.flags |= CMD_CLK_CTRL;
 	cmdreq.rlen = 0;
 	cmdreq.cb = NULL;
 
@@ -1209,7 +1211,7 @@ static int mipi_m4_lcd_on(struct platform_device *pdev)
 	pinfo = &mfd->panel_info;
 	mipi  = &mfd->panel_info.mipi;
 
-	m4_send_display_cmds(init_on_cmds, init_on_cmds_count);
+	m4_send_display_cmds(init_on_cmds, init_on_cmds_count, false);
 
 	atomic_set(&lcd_power_state, 1);
 
@@ -1235,6 +1237,7 @@ static int mipi_m4_lcd_off(struct platform_device *pdev)
 static int mipi_m4_display_on(struct platform_device *pdev)
 {
 	struct msm_fb_data_type *mfd;
+	bool clk_ctrl;
 
 	mfd = platform_get_drvdata(pdev);
 
@@ -1245,7 +1248,8 @@ static int mipi_m4_display_on(struct platform_device *pdev)
 
 	mipi_dsi_op_mode_config(DSI_CMD_MODE);
 
-	m4_send_display_cmds(display_on_cmds, display_on_cmds_count);
+	clk_ctrl = (mfd->panel_info.type == MIPI_CMD_PANEL);
+	m4_send_display_cmds(display_on_cmds, display_on_cmds_count, clk_ctrl);
 
 	return 0;
 }
@@ -1255,6 +1259,7 @@ DEFINE_LED_TRIGGER(bkl_led_trigger);
 static int mipi_m4_display_off(struct platform_device *pdev)
 {
 	struct msm_fb_data_type *mfd;
+	bool clk_ctrl;
 
 	mfd = platform_get_drvdata(pdev);
 
@@ -1263,7 +1268,8 @@ static int mipi_m4_display_off(struct platform_device *pdev)
 	if (mfd->key != MFD_KEY)
 		return -EINVAL;
 
-	m4_send_display_cmds(display_off_cmds, display_off_cmds_count);
+	clk_ctrl = (mfd->panel_info.type == MIPI_CMD_PANEL);
+	m4_send_display_cmds(display_off_cmds, display_off_cmds_count, clk_ctrl);
 
 	if (wled_trigger_initialized)
 		led_trigger_event(bkl_led_trigger, 0);
@@ -1280,12 +1286,14 @@ static int mipi_m4_display_off(struct platform_device *pdev)
 #ifdef CONFIG_MSM_CABC_VIDEO_ENHANCE
 static void m4_set_cabc(struct msm_fb_data_type *mfd, int mode)
 {
+	bool clk_ctrl = (mfd && mfd->panel_info_type == MIPI_CMD_PANEL);
+
 	pr_debug("%s: mode=%d\n",  __FUNCTION__, mode);
 
 	if (mode == 0)
-		m4_send_display_cmds(cabc_UI_cmds, ARRAY_SIZE(cabc_UI_cmds));
+		m4_send_display_cmds(cabc_UI_cmds, ARRAY_SIZE(cabc_UI_cmds), clk_ctrl);
 	else
-		m4_send_display_cmds(cabc_moving_cmds, ARRAY_SIZE(cabc_moving_cmds));
+		m4_send_display_cmds(cabc_moving_cmds, ARRAY_SIZE(cabc_moving_cmds), clk_ctrl);
 }
 #endif
 
@@ -1324,6 +1332,8 @@ static unsigned char m4_shrink_pwm(int val)
 static void m4_set_backlight(struct msm_fb_data_type *mfd)
 {
 	struct mipi_panel_info *mipi;
+	bool clk_ctrl = (mfd && mfd->panel_info.type == MIPI_CMD_PANEL);
+
 	led_pwm1[1] = m4_shrink_pwm((unsigned char)(mfd->bl_level));
 
 	if (mipi_m4_pdata && (mipi_m4_pdata->enable_wled_bl_ctrl)
@@ -1348,7 +1358,7 @@ static void m4_set_backlight(struct msm_fb_data_type *mfd)
 		mipi_dsi_op_mode_config(DSI_CMD_MODE);
 	}
 
-	m4_send_display_cmds(backlight_cmds, backlight_cmds_count);
+	m4_send_display_cmds(backlight_cmds, backlight_cmds_count, clk_ctrl);
 
 #ifdef CONFIG_BACKLIGHT_WLED_CABC
 	if (wled_trigger_initialized) {
