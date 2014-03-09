@@ -3105,7 +3105,6 @@ struct platform_device device_htc_ramdump = {
 };
 
 static struct platform_device *common_devices[] __initdata = {
-	&msm8930_device_acpuclk,
 	&msm8960_device_dmov,
 	&msm8930_device_qup_spi_gsbi10,
 	&msm8960_device_qup_i2c_gsbi3,
@@ -3880,6 +3879,12 @@ static void __init m4_init(void)
 #endif
 
 	platform_add_devices(msm8930_footswitch, msm8930_num_footswitch);
+
+	/* there seem to be two SoC variants in M4's out there */
+	if(cpu_is_msm8930aa())
+		platform_device_register(&msm8930aa_device_acpuclk);
+	else
+		platform_device_register(&msm8930_device_acpuclk);
 
 	platform_add_devices(common_devices, ARRAY_SIZE(common_devices));
 
