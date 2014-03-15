@@ -172,9 +172,9 @@ static void msm8930_mi2s_shutdown(struct snd_pcm_substream *substream)
 {
 #ifdef CONFIG_AMP_TFA9887
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-		pr_info("spk amp off ++");
+		pr_debug("spk amp off ++");
 		htc_audio_gpio.amp_speaker(false);
-		pr_info("spk amp off --");
+		pr_debug("spk amp off --");
 	}
 #endif
 	if (atomic_dec_return(&mi2s_rsc_ref) == 0) {
@@ -239,9 +239,9 @@ static int msm8930_mi2s_startup(struct snd_pcm_substream *substream)
 			pr_err("set format for codec dai failed\n");
 	}
 #ifdef CONFIG_AMP_TFA9887
-	pr_info("spk amp on ++");
+	pr_debug("spk amp on ++");
 	htc_audio_gpio.amp_speaker(true);
-	pr_info("spk amp on --");
+	pr_debug("spk amp on --");
 #endif
 	return ret;
 }
@@ -350,9 +350,9 @@ static void msm8930_ext_spk_power_amp_on(u32 spk)
 		msm8930_rcv_pamp |= spk;
 		if ((msm8930_rcv_pamp & RCV_AMP_POS) &&
 			(msm8930_rcv_pamp & RCV_AMP_NEG)) {
-			pr_info("rcv amp on++");
+			pr_debug("rcv amp on++");
 			htc_audio_gpio.amp_receiver(true);
-			pr_info("rcv amp on--");
+			pr_debug("rcv amp on--");
 
 			pr_debug("%s: slepping 4 ms after turning on external "
 				" Bottom Speaker Ampl\n", __func__);
@@ -367,9 +367,9 @@ static void msm8930_ext_spk_power_amp_on(u32 spk)
 		}
 
 		msm8930_hs_pamp |= spk;
-		pr_info("hs amp on++");
+		pr_debug("hs amp on++");
 		htc_audio_gpio.amp_headset(true);
-		pr_info("hs amp on--");
+		pr_debug("hs amp on--");
 		pr_debug("%s: slepping 4 ms after turning on external "
 			" Bottom Speaker Ampl\n", __func__);
 		usleep_range(4000, 4000);
@@ -425,9 +425,9 @@ static void msm8930_ext_spk_power_amp_off(u32 spk)
 		if (!msm8930_rcv_pamp)
 			return;
 
-		pr_info("rcv amp off ++");
+		pr_debug("rcv amp off ++");
 		htc_audio_gpio.amp_receiver(false);
-		pr_info("rcv amp off --");
+		pr_debug("rcv amp off --");
 
 		msm8930_rcv_pamp = 0;
 
@@ -438,9 +438,9 @@ static void msm8930_ext_spk_power_amp_off(u32 spk)
 		if (!msm8930_hs_pamp)
 			return;
 
-		pr_info("hs amp off++");
+		pr_debug("hs amp off++");
 		htc_audio_gpio.amp_headset(false);
-		pr_info("hs amp off--");
+		pr_debug("hs amp off--");
 
 		msm8930_hs_pamp = 0;
 
@@ -452,9 +452,9 @@ static void msm8930_ext_spk_power_amp_off(u32 spk)
 			return;
 
 #ifndef CONFIG_AMP_TFA9887
-		pr_info("spk amp off ++");
+		pr_debug("spk amp off ++");
 		htc_audio_gpio.amp_speaker(false);
-		pr_info("spk amp off --");
+		pr_debug("spk amp off --");
 #endif
 
 		msm8930_ext_bottom_spk_pamp = 0;
@@ -913,7 +913,6 @@ static int msm8930_hw_params(struct snd_pcm_substream *substream,
 			pr_err("%s: failed to get codec chan map\n", __func__);
 			goto end;
 		}
-
 		ret = snd_soc_dai_set_channel_map(cpu_dai, 0, 0,
 				msm8930_slim_0_rx_ch, rx_ch);
 		if (ret < 0) {
@@ -1011,13 +1010,10 @@ static int msm8930_slim_0_rx_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 	struct snd_interval *channels = hw_param_interval(params,
 					SNDRV_PCM_HW_PARAM_CHANNELS);
 
-	int format = SNDRV_PCM_FORMAT_S16_LE;
-
-	param_set_mask(params, SNDRV_PCM_HW_PARAM_FORMAT,
-		format);
-
 	rate->min = rate->max = 48000;
 	channels->min = channels->max = msm8930_slim_0_rx_ch;
+	param_set_mask(params, SNDRV_PCM_HW_PARAM_FORMAT,
+		SNDRV_PCM_FORMAT_S16_LE);
 
 	return 0;
 }
@@ -1047,16 +1043,13 @@ static int msm8930_mi2s_rx_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 	struct snd_interval *channels = hw_param_interval(params,
 					SNDRV_PCM_HW_PARAM_CHANNELS);
 
-	int format = SNDRV_PCM_FORMAT_S16_LE;
-
 	rate->min = rate->max = 48000;
 	channels->min = channels->max = 1;
 #ifdef CONFIG_AMP_TFA9887L
 	channels->min = channels->max = 2;
 #endif
-
 	param_set_mask(params, SNDRV_PCM_HW_PARAM_FORMAT,
-		format);
+		SNDRV_PCM_FORMAT_S16_LE);
 
 	return 0;
 }
@@ -1235,7 +1228,7 @@ static struct snd_soc_dai_link msm8930_dai[] = {
 		.name = "MSM8930 Media2",
 		.stream_name = "MultiMedia2",
 		.cpu_dai_name	= "MultiMedia2",
-		.platform_name  = "msm-pcm-dsp",
+		.platform_name  = "msm-multi-ch-pcm-dsp",
 		.dynamic = 1,
 		.codec_dai_name = "snd-soc-dummy-dai",
 		.codec_name = "snd-soc-dummy",
@@ -1630,6 +1623,20 @@ static struct snd_soc_dai_link msm8930_dai[] = {
 		.be_id = MSM_BACKEND_DAI_INCALL_RECORD_RX,
 		.be_hw_params_fixup = msm8930_be_hw_params_fixup,
 		.ignore_pmdown_time = 1, 
+	},
+	{
+		.name = "MI2S Hostless",
+		.stream_name = "SLIMBUS_0 Hostless",
+		.cpu_dai_name	= "SLIMBUS0_HOSTLESS",
+		.platform_name  = "msm-pcm-hostless",
+		.dynamic = 1,
+		.trigger = {SND_SOC_DPCM_TRIGGER_POST, SND_SOC_DPCM_TRIGGER_POST},
+		.no_host_mode = SND_SOC_DAI_LINK_NO_HOST,
+		.ignore_suspend = 1,
+		.ignore_pmdown_time = 1, /* this dainlink has playback support */
+		.codec_dai_name = "snd-soc-dummy-dai",
+		.codec_name = "snd-soc-dummy",
+		/* .be_id = do not care */
 	},
 };
 
