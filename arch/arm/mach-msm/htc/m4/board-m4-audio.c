@@ -61,7 +61,6 @@ static int msm8930_ext_bottom_spk_pamp;
 static int msm8930_ext_top_spk_pamp;
 static int msm8930_hs_pamp;
 static int msm8930_rcv_pamp;
-static bool isFMMI2S;
 extern struct htc_8930_gpio_pdata htc_audio_gpio;
 static int msm8930_slim_0_rx_ch = 1;
 static int msm8930_slim_0_tx_ch = 1;
@@ -1787,27 +1786,6 @@ static struct acoustic_ops acoustic = {
 	.enable_digital_mic = m4_enable_digital_mic,
 };
 
-#ifdef USE_HTC_Q6
-static int m4_get_q6_effect_mode(void)
-{
-	int mode = atomic_read(&q6_effect_mode);
-	pr_info("%s: mode %d\n", __func__, mode);
-	return mode;
-}
-
-static struct q6asm_ops qops = {
-	.get_q6_effect = m4_get_q6_effect_mode,
-};
-
-static struct msm_pcm_routing_ops rops = {
-	.get_q6_effect = m4_get_q6_effect_mode,
-};
-
-static struct msm_compr_q6_ops cops = {
-	.get_24b_audio = m4_get_24b_audio,
-};
-#endif
-
 static int __init m4_audio_init(void)
 {
         int ret=0;
@@ -1831,11 +1809,6 @@ static int __init m4_audio_init(void)
                 return ret;
         }
 
-#ifdef CONFIG_SND_SOC_MSM8930_FM_MI2S
-        isFMMI2S = 1;
-#else
-        isFMMI2S = 0;
-#endif
         atomic_set(&mi2s_rsc_ref, 0);
         atomic_set(&pri_i2s_rsc_ref, 0);
         mutex_init(&aux_pcm_mutex);
@@ -1863,11 +1836,6 @@ static int __init m4_audio_init(void)
 		GPIO_CFG_NO_PULL, GPIO_CFG_2MA), GPIO_CFG_ENABLE);
 	gpio_set_value(MSM_AUD_DMIC1_SEL, 0);
 
-#ifdef USE_HTC_Q6
-	htc_register_q6asm_ops(&qops);
-	htc_register_pcm_routing_ops(&rops);
-	htc_register_compr_q6_ops(&cops);
-#endif
 	acoustic_register_ops(&acoustic);
 	pr_info("%s", __func__);
 	return ret;
