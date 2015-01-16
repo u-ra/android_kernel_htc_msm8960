@@ -179,11 +179,7 @@ static struct msm_panel_common_pdata mdp_pdata = {
 	.mdp_bus_scale_table = &mdp_bus_scale_pdata,
 #endif
 	.mdp_rev = MDP_REV_43,
-#ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 	.mem_hid = BIT(ION_CP_MM_HEAP_ID),
-#else
-	.mem_hid = MEMTYPE_EBI1,
-#endif
 	.cont_splash_enabled = 0x00,
 	.splash_screen_addr = 0x00,
 	.splash_screen_size = 0x00,
@@ -194,15 +190,6 @@ void __init m4_mdp_writeback(struct memtype_reserve* reserve_table)
 {
 	mdp_pdata.ov0_wb_size = MSM_FB_OVERLAY0_WRITEBACK_SIZE;
 	mdp_pdata.ov1_wb_size = MSM_FB_OVERLAY1_WRITEBACK_SIZE;
-#if defined(CONFIG_ANDROID_PMEM) && !defined(CONFIG_MSM_MULTIMEDIA_USE_ION)
-	reserve_table[mdp_pdata.mem_hid].size +=
-		mdp_pdata.ov0_wb_size;
-	reserve_table[mdp_pdata.mem_hid].size +=
-		mdp_pdata.ov1_wb_size;
-
-	pr_info("mem_map: mdp reserved with size 0x%lx in pool\n",
-			mdp_pdata.ov0_wb_size + mdp_pdata.ov1_wb_size);
-#endif
 }
 
 #ifdef CONFIG_FB_MSM_WRITEBACK_MSM_PANEL
