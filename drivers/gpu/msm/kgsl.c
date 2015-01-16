@@ -1856,6 +1856,7 @@ static inline int _check_region(unsigned long start, unsigned long size,
 	return (end > len);
 }
 
+#ifdef CONFIG_ANDROID_PMEM
 static int kgsl_get_phys_file(int fd, unsigned long *start, unsigned long *len,
 			      unsigned long *vstart, struct file **filep)
 {
@@ -1865,10 +1866,8 @@ static int kgsl_get_phys_file(int fd, unsigned long *start, unsigned long *len,
 	struct fb_info *info;
 
 	*filep = NULL;
-#ifdef CONFIG_ANDROID_PMEM
 	if (!get_pmem_file(fd, start, vstart, len, filep))
 		return 0;
-#endif
 
 	fbfile = fget(fd);
 	if (fbfile == NULL) {
@@ -1959,11 +1958,10 @@ static int kgsl_setup_phys_file(struct kgsl_mem_entry *entry,
 
 	return 0;
 err:
-#ifdef CONFIG_ANDROID_PMEM
 	put_pmem_file(filep);
-#endif
 	return ret;
 }
+#endif
 
 static int memdesc_sg_virt(struct kgsl_memdesc *memdesc,
 	unsigned long paddr, int size)
@@ -2234,6 +2232,7 @@ static long kgsl_ioctl_map_user_mem(struct kgsl_device_private *dev_priv,
 		entry->memdesc.priv |= KGSL_MEMDESC_GUARD_PAGE;
 
 	switch (memtype) {
+#ifdef CONFIG_ANDROID_PMEM
 	case KGSL_USER_MEM_TYPE_PMEM:
 		if (param->fd == 0 || param->len == 0)
 			break;
@@ -2243,7 +2242,7 @@ static long kgsl_ioctl_map_user_mem(struct kgsl_device_private *dev_priv,
 					      param->len);
 		entry->memtype = KGSL_MEM_ENTRY_PMEM;
 		break;
-
+#endif
 	case KGSL_USER_MEM_TYPE_ADDR:
 		KGSL_DEV_ERR_ONCE(dev_priv->device, "User mem type "
 				"KGSL_USER_MEM_TYPE_ADDR is deprecated\n");

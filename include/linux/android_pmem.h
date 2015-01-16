@@ -82,6 +82,7 @@ struct pmem_allocation {
 };
 
 #ifdef __KERNEL__
+#ifdef CONFIG_ANDROID_PMEM
 int get_pmem_file(unsigned int fd, unsigned long *start, unsigned long *vstart,
 		  unsigned long *end, struct file **filp);
 int get_pmem_fd(int fd, unsigned long *start, unsigned long *end);
@@ -93,6 +94,21 @@ void flush_pmem_fd(int fd, unsigned long start, unsigned long len);
 void flush_pmem_file(struct file *file, unsigned long start, unsigned long len);
 int pmem_cache_maint(struct file *file, unsigned int cmd,
 		struct pmem_addr *pmem_addr);
+#else
+static int __maybe_unused get_pmem_file(unsigned int fd, unsigned long *start, unsigned long *vstart,
+		  unsigned long *end, struct file **filp)
+{
+	*start = 0;
+	*vstart = 0;
+	*end = 0;
+	*filp = NULL;
+	return 0;
+}
+
+static void __maybe_unused put_pmem_file(struct file* file)
+{
+}
+#endif
 
 enum pmem_allocator_type {
 	/* Zero is a default in platform PMEM structures in the board files,

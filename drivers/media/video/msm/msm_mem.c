@@ -72,7 +72,6 @@
 
 static DEFINE_MUTEX(hlist_mut);
 
-#ifdef CONFIG_ANDROID_PMEM
 static int check_pmem_info(struct msm_pmem_info *info, int len)
 {
 	if (info->offset < len &&
@@ -90,7 +89,6 @@ static int check_pmem_info(struct msm_pmem_info *info, int len)
 						len);
 	return -EINVAL;
 }
-#endif
 
 static int check_overlap(struct hlist_head *ptype,
 				unsigned long paddr,
@@ -148,7 +146,7 @@ static int msm_pmem_table_add(struct hlist_head *ptype,
 	}
 	region->vaddr = (unsigned long) vaddr;
 
-#elif CONFIG_ANDROID_PMEM
+#elif defined CONFIG_ANDROID_PMEM
 	rc = get_pmem_file(info->fd, &paddr, &kvstart, &len, &file);
 	if (rc < 0) {
 		pr_err("%s: get_pmem_file fd %d error %d\n",
@@ -195,7 +193,7 @@ out3:
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 out2:
 	ion_free(client, region->handle);
-#elif CONFIG_ANDROID_PMEM
+#elif defined CONFIG_ANDROID_PMEM
 	put_pmem_file(region->file);
 #endif
 out1:
